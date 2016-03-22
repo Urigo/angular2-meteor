@@ -144,6 +144,7 @@ At this moment, you are ready to create awesome apps backed by the power of Angu
 To use Meteor features, make sure that your components extends `MeteorComponent`, and you can feature that comes from Meteor:
 
 ````ts
+    import 'reflect-metadata';
     import {Component, View} from 'angular2/core';
     import {bootstrap} from 'angular2-meteor-auto-bootstrap';
     import {MeteorComponent} from 'angular2-meteor';
