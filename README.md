@@ -24,7 +24,9 @@ please check out common issues and troubleshoot [section](../../#commong-issues-
 ## Tutorial
 
 For full tutorial, please check out our 23-steps Angular2-Meteor [tutorial](http://www.angular-meteor.com/tutorials/socially/angular2/bootstrapping).
-> Please note, the tutorial above is about Angular2-Meteor version for Meteor 1.3.
+> The tutorial above is about Angular2-Meteor version for Meteor 1.3
+
+[Blueprint for the angular2-meteor tutorial](https://trello.com/b/kSa6JNCk/angular2-tutorial)
 
 ## Quick Start
 
