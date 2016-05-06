@@ -1,8 +1,6 @@
 'use strict';
 
 import {OnDestroy, NgZone, createNgZone} from '@angular/core';
-import {Meteor} from 'meteor/meteor';
-import {Tracker} from 'meteor/tracker';
 
 import {MeteorCallbacks, isMeteorCallbacks,
         isCallbacksObject, subscribeEvents} from './utils';

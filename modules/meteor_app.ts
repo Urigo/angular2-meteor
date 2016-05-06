@@ -4,7 +4,6 @@ import {ApplicationRef, NgZone, Type, Provider} from '@angular/core';
 import {ComponentRef, createPlatform, ReflectiveInjector,
   coreLoadAndBootstrap} from '@angular/core';
 import {isPresent} from '@angular/core/src/facade/lang';
-import {Meteor} from 'meteor/meteor';
 import * as Promise from 'meteor-promise';
 
 export type Providers = Array<Type | Provider | any[]>;
