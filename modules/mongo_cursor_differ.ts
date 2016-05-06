@@ -102,7 +102,7 @@ export class MongoCursorDiffer extends DefaultIterableDiffer {
       this._subscription = ObservableWrapper.subscribe(this._curObserver,
         changes => {
           // Run it outside Angular2 zone to cause running diff one more time and apply changes.
-          this._zone.runOutsideAngular(() => this._updateLatestValue(changes));
+          this._zone.run(() => this._updateLatestValue(changes));
         });
     }
 
