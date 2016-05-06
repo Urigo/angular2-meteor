@@ -22,15 +22,15 @@ import {
 } from './mongo_cursor_observer';
 
 export interface ObserverFactory {
-  create(cursor: Object): Object;
+  create(cursor:Object):Object;
 }
 
-function checkIfMongoCursor(cursor): boolean {
+function checkIfMongoCursor(cursor):boolean {
   return MongoCursorObserver.isCursor(cursor);
 }
 
 class MongoCursorObserverFactory implements ObserverFactory {
-  create(cursor: Object): Object {
+  create(cursor:Object):Object {
     if (checkIfMongoCursor(cursor)) {
       return new MongoCursorObserver(<Mongo.Cursor<any>>cursor);
     }
@@ -39,9 +39,11 @@ class MongoCursorObserverFactory implements ObserverFactory {
 }
 
 export class MongoCursorDifferFactory extends DefaultIterableDifferFactory {
-  supports(obj: Object): boolean { return checkIfMongoCursor(obj); }
+  supports(obj:Object):boolean {
+    return checkIfMongoCursor(obj);
+  }
 
-  create(cdRef: ChangeDetectorRef): MongoCursorDiffer {
+  create(cdRef:ChangeDetectorRef):MongoCursorDiffer {
     return new MongoCursorDiffer(cdRef, new MongoCursorObserverFactory());
   }
 }
@@ -49,48 +51,48 @@ export class MongoCursorDifferFactory extends DefaultIterableDifferFactory {
 const trackById = (index, item) => item._id;
 
 export class MongoCursorDiffer extends DefaultIterableDiffer {
-  private _inserted: Array<CollectionChangeRecord> = [];
-  private _removed: Array<CollectionChangeRecord> = [];
-  private _moved: Array<CollectionChangeRecord> = [];
-  private _updated: Array<CollectionChangeRecord> = [];
-  private _curObserver: MongoCursorObserver;
-  private _lastChanges: Array<AddChange | MoveChange | RemoveChange>;
-  private _listSize: number = 0;
-  private _cursor: Mongo.Cursor<any>;
-  private _obsFactory: ObserverFactory;
-  private _subscription: Object;
+  private _inserted:Array<CollectionChangeRecord> = [];
+  private _removed:Array<CollectionChangeRecord> = [];
+  private _moved:Array<CollectionChangeRecord> = [];
+  private _updated:Array<CollectionChangeRecord> = [];
+  private _curObserver:MongoCursorObserver;
+  private _lastChanges:Array<AddChange | MoveChange | RemoveChange>;
+  private _listSize:number = 0;
+  private _cursor:Mongo.Cursor<any>;
+  private _obsFactory:ObserverFactory;
+  private _subscription:Object;
   private _zone = MeteorApp.ngZone() || createNgZone();
 
-  constructor(cdRef: ChangeDetectorRef, obsFactory: ObserverFactory) {
+  constructor(cdRef:ChangeDetectorRef, obsFactory:ObserverFactory) {
     super(trackById);
     this._obsFactory = obsFactory;
   }
 
-  forEachAddedItem(fn: Function) {
+  forEachAddedItem(fn:Function) {
     for (let i = 0; i < this._inserted.length; i++) {
       fn(this._inserted[i]);
     }
   }
 
-  forEachMovedItem(fn: Function) {
+  forEachMovedItem(fn:Function) {
     for (let i = 0; i < this._moved.length; i++) {
       fn(this._moved[i]);
     }
   }
 
-  forEachRemovedItem(fn: Function) {
+  forEachRemovedItem(fn:Function) {
     for (let i = 0; i < this._removed.length; i++) {
       fn(this._removed[i]);
     }
   }
 
-  forEachIdentityChange(fn: Function) {
+  forEachIdentityChange(fn:Function) {
     for (let i = 0; i < this._updated.length; i++) {
       fn(this._updated[i]);
     }
   }
 
-  diff(cursor: Mongo.Cursor<any>) {
+  diff(cursor:Mongo.Cursor<any>) {
     this._reset();
 
     let newCursor = false;
@@ -102,7 +104,12 @@ export class MongoCursorDiffer extends DefaultIterableDiffer {
       this._subscription = ObservableWrapper.subscribe(this._curObserver,
         changes => {
           // Run it outside Angular2 zone to cause running diff one more time and apply changes.
-          this._zone.run(() => this._updateLatestValue(changes));
+          this._zone.runOutsideAngular(() => {
+            let retVal = this._updateLatestValue(changes);
+            this._zone.run(() => {});
+            
+            return retVal;
+          });
         });
     }
 
