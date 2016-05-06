@@ -1,6 +1,6 @@
 {
   "rules": {
-    "align": [true, "parameters"],
+    "align": false,
     "class-name": true,
     "comment-format": [true, "check-uppercase", "check-space"],
     "curly": true,
@@ -11,11 +11,7 @@
     "label-undefined": true,
     "max-line-length": [true, 100],
     "member-access": false,
-    "member-ordering": [true,
-      "public-before-private",
-      "static-before-instance",
-      "variables-before-functions"
-    ],
+    "member-ordering": false,
     "no-arg": true,
     "no-bitwise": true,
     "no-console": [true,
