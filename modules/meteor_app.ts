@@ -35,7 +35,7 @@ export class MeteorApp {
       appProviders, platRef.injector);
     const appRef = appInjector.get(ApplicationRef);
 
-    return this.launch(appRef, () => coreLoadAndBootstrap(appInjector, component));
+    return this.launch(appRef, () => coreLoadAndBootstrap(component, appInjector));
   }
 
   static current() {
