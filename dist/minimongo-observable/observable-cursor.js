@@ -1,28 +1,21 @@
 'use strict';
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var rxjs_1 = require('rxjs');
-var cursor_handle_1 = require('../cursor_handle');
-var utils_1 = require('../utils');
-var ObservableCursor = (function (_super) {
-    __extends(ObservableCursor, _super);
-    function ObservableCursor(cursor) {
-        var _this = this;
-        _super.call(this, function (observer) {
-            _this._observers.push(observer);
-            if (!_this._hCursor) {
-                _this._hCursor = new cursor_handle_1.CursorHandle(_this._observeCursor(cursor));
+const rxjs_1 = require('rxjs');
+const cursor_handle_1 = require('../cursor_handle');
+const utils_1 = require('../utils');
+class ObservableCursor extends rxjs_1.Observable {
+    constructor(cursor) {
+        super((observer) => {
+            this._observers.push(observer);
+            if (!this._hCursor) {
+                this._hCursor = new cursor_handle_1.CursorHandle(this._observeCursor(cursor));
             }
-            return function () {
-                var index = _this._observers.indexOf(observer);
+            return () => {
+                let index = this._observers.indexOf(observer);
                 if (index !== -1) {
-                    _this._observers.splice(index, 1);
+                    this._observers.splice(index, 1);
                 }
-                if (!_this._observers.length) {
-                    _this.stop();
+                if (!this._observers.length) {
+                    this.stop();
                 }
             };
         });
@@ -30,55 +23,49 @@ var ObservableCursor = (function (_super) {
         _.extend(this, _.omit(cursor, 'count', 'map'));
         this._cursor = cursor;
     }
-    ObservableCursor.create = function (cursor) {
+    static create(cursor) {
         return new ObservableCursor(cursor);
-    };
-    Object.defineProperty(ObservableCursor.prototype, "cursor", {
-        get: function () {
-            return this._cursor;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    ObservableCursor.prototype.stop = function () {
+    }
+    get cursor() {
+        return this._cursor;
+    }
+    stop() {
         if (this._hCursor) {
             this._hCursor.stop();
         }
         this._runComplete();
         this._hCursor = null;
-    };
-    ObservableCursor.prototype.dispose = function () {
+    }
+    dispose() {
         this._observers = null;
         this._cursor = null;
-    };
-    ObservableCursor.prototype.fetch = function () {
+    }
+    fetch() {
         return this._cursor.fetch();
-    };
-    ObservableCursor.prototype.observe = function (callbacks) {
+    }
+    observe(callbacks) {
         return this._cursor.observe(callbacks);
-    };
-    ObservableCursor.prototype.observeChanges = function (callbacks) {
+    }
+    observeChanges(callbacks) {
         return this._cursor.observeChanges(callbacks);
-    };
-    ObservableCursor.prototype._runComplete = function () {
-        this._observers.forEach(function (observer) {
+    }
+    _runComplete() {
+        this._observers.forEach(observer => {
             observer.complete();
         });
-    };
-    ObservableCursor.prototype._runNext = function (cursor) {
-        this._observers.forEach(function (observer) {
+    }
+    _runNext(cursor) {
+        this._observers.forEach(observer => {
             observer.next(cursor.fetch());
         });
-    };
-    ObservableCursor.prototype._observeCursor = function (cursor) {
-        var _this = this;
-        var handleChange = function () { _this._runNext(cursor); };
-        return utils_1.gZone.run(function () { return cursor.observeChanges({
+    }
+    _observeCursor(cursor) {
+        const handleChange = () => { this._runNext(cursor); };
+        return utils_1.gZone.run(() => cursor.observeChanges({
             added: handleChange,
             changed: handleChange,
             removed: handleChange
-        }); });
-    };
-    return ObservableCursor;
-}(rxjs_1.Observable));
+        }));
+    }
+}
 exports.ObservableCursor = ObservableCursor;
