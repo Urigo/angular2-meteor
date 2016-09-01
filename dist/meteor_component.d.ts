@@ -1,5 +1,10 @@
 import { OnDestroy } from '@angular/core';
 /**
+ * The built in string object.
+ * @external Tracker.Computation
+ * @see {@link https://docs.meteor.com/api/tracker.html#tracker_computation}
+ */
+/**
  * A class to extend in Angular 2 components.
  * Contains wrappers over main Meteor methods,
  * that does some maintenance work behind the scene.
