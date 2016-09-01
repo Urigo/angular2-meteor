@@ -22,7 +22,7 @@ export declare class MeteorComponent implements OnDestroy {
      *   current computation is invalidated.
      * @param {Boolean} autoBind - autoBind Determine whether Angular 2 zone will run
      *   after the func call to initiate change detection.
-     * @returns {Tracker.Computation} - Object representing the Meteor computation
+     * @returns {external:Tracker.Computation} - Object representing the Meteor computation
      */
     autorun(func: (c: Tracker.Computation) => any, autoBind?: Boolean): Tracker.Computation;
     /**
