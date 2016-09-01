@@ -16,9 +16,10 @@ class MeteorComponent {
     /**
      * Method has the same notation as Meteor.autorun
      * except the last parameter.
-     * @param {Function} func - Callback to be executed when
-     *   current computation is invalidated.
-     * @param {Boolean} autoBind - autoBind Determine whether Angular 2 zone will run
+     * @param {MeteorComponent~autorunCallback} func - Callback to be executed when current computation is
+     * invalidated. The Tracker.Computation object will be passed as argument to
+     * this callback.
+     * @param {Boolean} autoBind - Determine whether Angular2 Zone will run
      *   after the func call to initiate change detection.
      * @returns {Tracker.Computation} - Object representing the Meteor computation
      * @example
@@ -125,3 +126,8 @@ class MeteorComponent {
     }
 }
 exports.MeteorComponent = MeteorComponent;
+/**
+ * This callback called when autorun triggered by Meteor.
+ * @callback MeteorComponent~autorunCallback
+ * @param {Tracker.Computation} computation
+ */ 

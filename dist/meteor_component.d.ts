@@ -13,9 +13,10 @@ export declare class MeteorComponent implements OnDestroy {
     /**
      * Method has the same notation as Meteor.autorun
      * except the last parameter.
-     * @param {Function} func - Callback to be executed when
-     *   current computation is invalidated.
-     * @param {Boolean} autoBind - autoBind Determine whether Angular 2 zone will run
+     * @param {MeteorComponent~autorunCallback} func - Callback to be executed when current computation is
+     * invalidated. The Tracker.Computation object will be passed as argument to
+     * this callback.
+     * @param {Boolean} autoBind - Determine whether Angular2 Zone will run
      *   after the func call to initiate change detection.
      * @returns {Tracker.Computation} - Object representing the Meteor computation
      * @example
@@ -34,7 +35,7 @@ export declare class MeteorComponent implements OnDestroy {
      *
      * @see {@link https://docs.meteor.com/api/tracker.html#tracker_computation|Tracker.Computation}
      */
-    autorun(func: (c: Tracker.Computation) => any, autoBind?: Boolean): Tracker.Computation;
+    autorun(func: (computation: Tracker.Computation) => any, autoBind?: Boolean): Tracker.Computation;
     /**
      *  Method has the same notation as Meteor.subscribe:
      *    subscribe(name, [args1, args2], [callbacks], [autoBind])
