@@ -23,6 +23,20 @@ export class MeteorComponent implements OnDestroy {
    * @param {Boolean} autoBind - autoBind Determine whether Angular 2 zone will run
    *   after the func call to initiate change detection.
    * @returns {Tracker.Computation} - Object representing the Meteor computation
+   * @example
+   * class MyComponent extends MeteorComponent {
+   *    private myData: Mongo.Cursor;
+   *    private dataId: any;
+   *
+   *    constructor() {
+   *      super();
+   *
+   *      this.autorun(() => {
+   *        this.myData = MyCollection.find({ _id: dataId});
+   *      }, true);
+   *    }
+   * }
+   *
    * @see {@link https://docs.meteor.com/api/tracker.html#tracker_computation|Tracker.Computation}
    */
   autorun(func: (c: Tracker.Computation) => any,
@@ -94,6 +108,7 @@ export class MeteorComponent implements OnDestroy {
    *  @param {any} args - Parameters that will be forwarded to the method.
    *  @param {Boolean} autoBind - autoBind Determine whether Angular 2 zone will run
    *   after the func call to initiate change detection.
+   *  @return {void}
    */
   call(name: string, ...args: any[]) {
     let { pargs, autoBind } = this._prepArgs(args);
