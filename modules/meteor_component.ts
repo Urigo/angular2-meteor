@@ -13,6 +13,7 @@ import {DataObserver} from './data_observer';
  * that does some maintenance work behind the scene.
  * For example, it destroys subscription handles
  * when the component is being destroyed itself.
+ * @class
  */
 export class MeteorComponent implements OnDestroy {
   private _hAutoruns: Array<Tracker.Computation> = [];
@@ -22,9 +23,10 @@ export class MeteorComponent implements OnDestroy {
   /**
    * Method has the same notation as Meteor.autorun
    * except the last parameter.
-   * @param func Callback to be executed when
+   * @function
+   * @param {Function} func - Callback to be executed when
    *   current computation is invalidated.
-   * @param autoBind Determine whether Angular 2 zone will run
+   * @param {boolean} - autoBind Determine whether Angular 2 zone will run
    *   after the func call to initiate change detection.
    */
   autorun(func: (c: Tracker.Computation) => any,
