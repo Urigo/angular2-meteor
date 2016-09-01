@@ -8,71 +8,77 @@
  * Scheduling happens in a way to reduce number of zone runs
  * since multiple callbacks can be run near the same time.
  */
-const lang_1 = require('@angular/core/src/facade/lang');
-const data_observer_1 = require('./data_observer');
-const utils_1 = require('./utils');
-class ZoneRunScheduler {
-    constructor() {
+var lang_1 = require('@angular/core/src/facade/lang');
+var data_observer_1 = require('./data_observer');
+var utils_1 = require('./utils');
+var ZoneRunScheduler = (function () {
+    function ZoneRunScheduler() {
         this._zoneTasks = new Map();
         this._onRunCbs = new Map();
     }
-    zoneRun(zone) {
-        return () => {
+    ZoneRunScheduler.prototype.zoneRun = function (zone) {
+        var _this = this;
+        return function () {
             zone.run(lang_1.noop);
-            this._runAfterRunCbs(zone);
-            this._zoneTasks.delete(zone);
+            _this._runAfterRunCbs(zone);
+            _this._zoneTasks.delete(zone);
         };
-    }
-    runZones() {
-        this._zoneTasks.forEach((task, zone) => {
+    };
+    ZoneRunScheduler.prototype.runZones = function () {
+        this._zoneTasks.forEach(function (task, zone) {
             task.invoke();
         });
-    }
-    _runAfterRunCbs(zone) {
+    };
+    ZoneRunScheduler.prototype._runAfterRunCbs = function (zone) {
         if (this._onRunCbs.has(zone)) {
-            let cbs = this._onRunCbs.get(zone);
+            var cbs = this._onRunCbs.get(zone);
             while (cbs.length !== 0) {
                 (cbs.pop())();
             }
             this._onRunCbs.delete(zone);
         }
-    }
-    scheduleRun(zone) {
+    };
+    ZoneRunScheduler.prototype.scheduleRun = function (zone) {
         if (zone === utils_1.gZone) {
             return;
         }
-        let runTask = this._zoneTasks.get(zone);
+        var runTask = this._zoneTasks.get(zone);
         if (runTask) {
             runTask.cancelFn(runTask);
             this._zoneTasks.delete(zone);
         }
-        runTask = utils_1.gZone.scheduleMacroTask('runZones', this.zoneRun(zone), { isPeriodic: true }, task => {
+        runTask = utils_1.gZone.scheduleMacroTask('runZones', this.zoneRun(zone), { isPeriodic: true }, function (task) {
             task._tHandler = setTimeout(task.invoke);
-        }, task => {
+        }, function (task) {
             clearTimeout(task._tHandler);
         });
         this._zoneTasks.set(zone, runTask);
-    }
-    onAfterRun(zone, cb) {
+    };
+    ZoneRunScheduler.prototype.onAfterRun = function (zone, cb) {
         utils_1.check(cb, Function);
         if (!this._zoneTasks.has(zone)) {
             cb();
             return;
         }
-        let cbs = this._onRunCbs.get(zone);
+        var cbs = this._onRunCbs.get(zone);
         if (!cbs) {
             cbs = [];
             this._onRunCbs.set(zone, cbs);
         }
         cbs.push(cb);
-    }
-}
+    };
+    return ZoneRunScheduler;
+}());
 exports.ZoneRunScheduler = ZoneRunScheduler;
 exports.zoneRunScheduler = new ZoneRunScheduler();
 function wrapInZone(method, context) {
-    let zone = utils_1.g.Zone.current;
-    return function (...args) {
-        utils_1.gZone.run(() => {
+    var zone = utils_1.g.Zone.current;
+    return function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i - 0] = arguments[_i];
+        }
+        utils_1.gZone.run(function () {
             method.apply(context, args);
         });
         exports.zoneRunScheduler.scheduleRun(zone);
@@ -82,29 +88,34 @@ function wrapCallback(callback, context) {
     if (_.isFunction(callback)) {
         return wrapInZone(callback, context);
     }
-    for (let fn of _.functions(callback)) {
+    for (var _i = 0, _a = _.functions(callback); _i < _a.length; _i++) {
+        var fn = _a[_i];
         callback[fn] = wrapInZone(callback[fn], context);
     }
     return callback;
 }
 // Save original methods.
-const trackerAutorun = Tracker.autorun;
-const meteorSubscribe = Meteor.subscribe;
-const meteorCall = Meteor.call;
-const mongoObserve = Mongo.Cursor.prototype.observe;
-const mongoObserveChanges = Mongo.Cursor.prototype.observeChanges;
+var trackerAutorun = Tracker.autorun;
+var meteorSubscribe = Meteor.subscribe;
+var meteorCall = Meteor.call;
+var mongoObserve = Mongo.Cursor.prototype.observe;
+var mongoObserveChanges = Mongo.Cursor.prototype.observeChanges;
 function patchTrackerAutorun(autorun) {
     return function (runFunc, options) {
         runFunc = wrapCallback(runFunc, this);
-        const params = lang_1.isPresent(options) ? [runFunc, options] : [runFunc];
+        var params = lang_1.isPresent(options) ? [runFunc, options] : [runFunc];
         return autorun.apply(this, params);
     };
 }
 exports.patchTrackerAutorun = patchTrackerAutorun;
 ;
 function patchMeteorSubscribe(subscribe) {
-    return function (...args) {
-        let callback = args[args.length - 1];
+    return function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i - 0] = arguments[_i];
+        }
+        var callback = args[args.length - 1];
         if (utils_1.isMeteorCallbacks(callback)) {
             args[args.length - 1] = data_observer_1.DataObserver.pushCb(wrapCallback(callback, this));
         }
@@ -117,8 +128,12 @@ function patchMeteorSubscribe(subscribe) {
 exports.patchMeteorSubscribe = patchMeteorSubscribe;
 ;
 function patchMeteorCall(call) {
-    return function (...args) {
-        let callback = args[args.length - 1];
+    return function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i - 0] = arguments[_i];
+        }
+        var callback = args[args.length - 1];
         if (utils_1.isMeteorCallbacks(callback)) {
             args[args.length - 1] = data_observer_1.DataObserver.pushCb(wrapCallback(callback, this));
         }

@@ -1,10 +1,10 @@
 'use strict';
-const core_1 = require('@angular/core');
-const mongo_cursor_differ_1 = require('./mongo_cursor_differ');
-const change_detection_1 = require('@angular/core/src/change_detection/change_detection');
+var core_1 = require('@angular/core');
+var mongo_cursor_differ_1 = require('./mongo_cursor_differ');
+var change_detection_1 = require('@angular/core/src/change_detection/change_detection');
 function meteorProviders() {
-    let providers = [];
-    let factories = change_detection_1.defaultIterableDiffers.factories;
+    var providers = [];
+    var factories = change_detection_1.defaultIterableDiffers.factories;
     if (factories) {
         factories.push(new mongo_cursor_differ_1.MongoCursorDifferFactory());
     }

@@ -1,7 +1,7 @@
 'use strict';
-const utils_1 = require('./utils');
-class CursorHandle {
-    constructor(hCurObserver, hAutoNotify) {
+var utils_1 = require('./utils');
+var CursorHandle = (function () {
+    function CursorHandle(hCurObserver, hAutoNotify) {
         utils_1.check(hAutoNotify, Match.Optional(Tracker.Computation));
         utils_1.check(hCurObserver, Match.Where(function (observer) {
             return !!observer.stop;
@@ -9,11 +9,12 @@ class CursorHandle {
         this._hAutoNotify = hAutoNotify;
         this._hCurObserver = hCurObserver;
     }
-    stop() {
+    CursorHandle.prototype.stop = function () {
         if (this._hAutoNotify) {
             this._hAutoNotify.stop();
         }
         this._hCurObserver.stop();
-    }
-}
+    };
+    return CursorHandle;
+}());
 exports.CursorHandle = CursorHandle;

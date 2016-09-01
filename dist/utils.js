@@ -6,7 +6,7 @@ function isMeteorCallbacks(callbacks) {
 exports.isMeteorCallbacks = isMeteorCallbacks;
 // Checks if callbacks of {@link CallbacksObject} type.
 function isCallbacksObject(callbacks) {
-    return callbacks && exports.subscribeEvents.some((event) => {
+    return callbacks && exports.subscribeEvents.some(function (event) {
         return _.isFunction(callbacks[event]);
     });
 }
@@ -20,12 +20,16 @@ exports.EJSON = Package['ejson'].EJSON;
 exports.check = Package['check'].check;
 exports.Match = Package['check'].Match;
 function debounce(func, wait, onInit) {
-    let timeout, result, data;
-    let later = function (context, args) {
+    var timeout, result, data;
+    var later = function (context, args) {
         timeout = null;
-        result = func.apply(context, [...args, data]);
+        result = func.apply(context, args.concat([data]));
     };
-    let debounced = function (...args) {
+    var debounced = function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i - 0] = arguments[_i];
+        }
         if (!timeout) {
             data = onInit && onInit();
         }
