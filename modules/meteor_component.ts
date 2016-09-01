@@ -4,12 +4,6 @@ import {OnDestroy} from '@angular/core';
 import {isMeteorCallbacks, isCallbacksObject, gZone, g} from './utils';
 
 /**
- * The built in string object.
- * @external Tracker.Computation
- * @see {@link https://docs.meteor.com/api/tracker.html#tracker_computation}
- */
-
-/**
  * A class to extend in Angular 2 components.
  * Contains wrappers over main Meteor methods,
  * that does some maintenance work behind the scene.
@@ -28,7 +22,8 @@ export class MeteorComponent implements OnDestroy {
    *   current computation is invalidated.
    * @param {Boolean} autoBind - autoBind Determine whether Angular 2 zone will run
    *   after the func call to initiate change detection.
-   * @returns {external:Tracker.Computation} - Object representing the Meteor computation
+   * @returns {Tracker.Computation} - Object representing the Meteor computation
+   * @see {@link https://docs.meteor.com/api/tracker.html#tracker_computation|Tracker.Computation}
    */
   autorun(func: (c: Tracker.Computation) => any,
           autoBind: Boolean = true): Tracker.Computation {
@@ -56,6 +51,7 @@ export class MeteorComponent implements OnDestroy {
    *  @param {Boolean} autoBind - autoBind Determine whether Angular 2 zone will run
    *   after the func call to initiate change detection.
    *  @returns {Meteor.SubscriptionHandle} - The handle of the subscription created by Meteor.
+   *  @see {@link http://docs.meteor.com/api/pubsub.html|Meteor.SubscriptionHandle}
    */
   subscribe(name: string, ...args: any[]): Meteor.SubscriptionHandle {
     let { pargs, autoBind } = this._prepArgs(args);
