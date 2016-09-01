@@ -1,11 +1,7 @@
 'use strict';
 
 import {OnDestroy} from '@angular/core';
-
-import {noop} from '@angular/core/src/facade/lang';
-
 import {isMeteorCallbacks, isCallbacksObject, gZone, g} from './utils';
-import {DataObserver} from './data_observer';
 
 /**
  * A class to extend in Angular 2 components.
@@ -13,7 +9,6 @@ import {DataObserver} from './data_observer';
  * that does some maintenance work behind the scene.
  * For example, it destroys subscription handles
  * when the component is being destroyed itself.
- * @class
  */
 export class MeteorComponent implements OnDestroy {
   private _hAutoruns: Array<Tracker.Computation> = [];
@@ -23,11 +18,11 @@ export class MeteorComponent implements OnDestroy {
   /**
    * Method has the same notation as Meteor.autorun
    * except the last parameter.
-   * @function
    * @param {Function} func - Callback to be executed when
    *   current computation is invalidated.
-   * @param {boolean} - autoBind Determine whether Angular 2 zone will run
+   * @param {Boolean} autoBind - autoBind Determine whether Angular 2 zone will run
    *   after the func call to initiate change detection.
+   * @returns {Tracker.Computation} - Object representing the Meteor computation
    */
   autorun(func: (c: Tracker.Computation) => any,
           autoBind: Boolean = true): Tracker.Computation {
@@ -50,6 +45,11 @@ export class MeteorComponent implements OnDestroy {
    *  Method has the same notation as Meteor.subscribe:
    *    subscribe(name, [args1, args2], [callbacks], [autoBind])
    *  except the last autoBind param (see autorun above).
+   *  @param {String} name - Name of the publication in the Meteor server
+   *  @param {any} args - Parameters that will be forwarded to the publication.
+   *  @param {Boolean} autoBind - autoBind Determine whether Angular 2 zone will run
+   *   after the func call to initiate change detection.
+   *  @returns {Meteor.SubscriptionHandle} - The handle of the subscription created by Meteor.
    */
   subscribe(name: string, ...args: any[]): Meteor.SubscriptionHandle {
     let { pargs, autoBind } = this._prepArgs(args);
@@ -57,7 +57,7 @@ export class MeteorComponent implements OnDestroy {
     if (!Meteor.subscribe) {
       throw new Error(
         'Meteor.subscribe is not defined on the server side');
-    };
+    }
 
     let subscribeCall = () => {
       return Meteor.subscribe(name, ...pargs);
@@ -68,7 +68,7 @@ export class MeteorComponent implements OnDestroy {
 
     if (Meteor.isClient) {
       this._hSubscribes.push(hSubscribe);
-    };
+    }
 
     if (Meteor.isServer) {
       let callback = pargs[pargs.length - 1];
@@ -84,6 +84,15 @@ export class MeteorComponent implements OnDestroy {
     return hSubscribe;
   }
 
+  /**
+   *  Method has the same notation as Meteor.subscribe:
+   *    subscribe(name, [args1, args2], [callbacks], [autoBind])
+   *  except the last autoBind param (see autorun above).
+   *  @param {String} name - Name of the publication in the Meteor server
+   *  @param {any} args - Parameters that will be forwarded to the method.
+   *  @param {Boolean} autoBind - autoBind Determine whether Angular 2 zone will run
+   *   after the func call to initiate change detection.
+   */
   call(name: string, ...args: any[]) {
     let { pargs, autoBind } = this._prepArgs(args);
 

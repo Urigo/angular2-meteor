@@ -5,7 +5,6 @@ import { OnDestroy } from '@angular/core';
  * that does some maintenance work behind the scene.
  * For example, it destroys subscription handles
  * when the component is being destroyed itself.
- * @class
  */
 export declare class MeteorComponent implements OnDestroy {
     private _hAutoruns;
@@ -14,19 +13,33 @@ export declare class MeteorComponent implements OnDestroy {
     /**
      * Method has the same notation as Meteor.autorun
      * except the last parameter.
-     * @function
      * @param {Function} func - Callback to be executed when
      *   current computation is invalidated.
-     * @param {boolean} - autoBind Determine whether Angular 2 zone will run
+     * @param {Boolean} autoBind - autoBind Determine whether Angular 2 zone will run
      *   after the func call to initiate change detection.
+     * @returns {Tracker.Computation} - Object representing the Meteor computation
      */
     autorun(func: (c: Tracker.Computation) => any, autoBind?: Boolean): Tracker.Computation;
     /**
      *  Method has the same notation as Meteor.subscribe:
      *    subscribe(name, [args1, args2], [callbacks], [autoBind])
      *  except the last autoBind param (see autorun above).
+     *  @param {String} name - Name of the publication in the Meteor server
+     *  @param {any} args - Parameters that will be forwarded to the publication.
+     *  @param {Boolean} autoBind - autoBind Determine whether Angular 2 zone will run
+     *   after the func call to initiate change detection.
+     *  @returns {Meteor.SubscriptionHandle} - The handle of the subscription created by Meteor.
      */
     subscribe(name: string, ...args: any[]): Meteor.SubscriptionHandle;
+    /**
+     *  Method has the same notation as Meteor.subscribe:
+     *    subscribe(name, [args1, args2], [callbacks], [autoBind])
+     *  except the last autoBind param (see autorun above).
+     *  @param {String} name - Name of the publication in the Meteor server
+     *  @param {any} args - Parameters that will be forwarded to the method.
+     *  @param {Boolean} autoBind - autoBind Determine whether Angular 2 zone will run
+     *   after the func call to initiate change detection.
+     */
     call(name: string, ...args: any[]): any;
     ngOnDestroy(): void;
     private _prepArgs(args);

@@ -1,15 +1,14 @@
 'use strict';
-var utils_1 = require('./utils');
+const utils_1 = require('./utils');
 /**
  * A class to extend in Angular 2 components.
  * Contains wrappers over main Meteor methods,
  * that does some maintenance work behind the scene.
  * For example, it destroys subscription handles
  * when the component is being destroyed itself.
- * @class
  */
-var MeteorComponent = (function () {
-    function MeteorComponent() {
+class MeteorComponent {
+    constructor() {
         this._hAutoruns = [];
         this._hSubscribes = [];
         this._ngZone = utils_1.g.Zone.current;
@@ -17,51 +16,49 @@ var MeteorComponent = (function () {
     /**
      * Method has the same notation as Meteor.autorun
      * except the last parameter.
-     * @function
      * @param {Function} func - Callback to be executed when
      *   current computation is invalidated.
-     * @param {boolean} - autoBind Determine whether Angular 2 zone will run
+     * @param {Boolean} autoBind - autoBind Determine whether Angular 2 zone will run
      *   after the func call to initiate change detection.
+     * @returns {Tracker.Computation} - Object representing the Meteor computation
      */
-    MeteorComponent.prototype.autorun = function (func, autoBind) {
-        if (autoBind === void 0) { autoBind = true; }
-        var autorunCall = function () {
+    autorun(func, autoBind = true) {
+        let autorunCall = () => {
             return Tracker.autorun(func);
         };
         // If autoBind is set to false then
         // we run Meteor method in the global zone
         // instead of the current Angular 2 zone.
-        var zone = autoBind ? this._ngZone : utils_1.gZone;
-        var hAutorun = zone.run(autorunCall);
+        let zone = autoBind ? this._ngZone : utils_1.gZone;
+        let hAutorun = zone.run(autorunCall);
         this._hAutoruns.push(hAutorun);
         return hAutorun;
-    };
+    }
     /**
      *  Method has the same notation as Meteor.subscribe:
      *    subscribe(name, [args1, args2], [callbacks], [autoBind])
      *  except the last autoBind param (see autorun above).
+     *  @param {String} name - Name of the publication in the Meteor server
+     *  @param {any} args - Parameters that will be forwarded to the publication.
+     *  @param {Boolean} autoBind - autoBind Determine whether Angular 2 zone will run
+     *   after the func call to initiate change detection.
+     *  @returns {Meteor.SubscriptionHandle} - The handle of the subscription created by Meteor.
      */
-    MeteorComponent.prototype.subscribe = function (name) {
-        var args = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            args[_i - 1] = arguments[_i];
-        }
-        var _a = this._prepArgs(args), pargs = _a.pargs, autoBind = _a.autoBind;
+    subscribe(name, ...args) {
+        let { pargs, autoBind } = this._prepArgs(args);
         if (!Meteor.subscribe) {
             throw new Error('Meteor.subscribe is not defined on the server side');
         }
-        ;
-        var subscribeCall = function () {
-            return Meteor.subscribe.apply(Meteor, [name].concat(pargs));
+        let subscribeCall = () => {
+            return Meteor.subscribe(name, ...pargs);
         };
-        var zone = autoBind ? this._ngZone : utils_1.gZone;
-        var hSubscribe = zone.run(subscribeCall);
+        let zone = autoBind ? this._ngZone : utils_1.gZone;
+        let hSubscribe = zone.run(subscribeCall);
         if (Meteor.isClient) {
             this._hSubscribes.push(hSubscribe);
         }
-        ;
         if (Meteor.isServer) {
-            var callback = pargs[pargs.length - 1];
+            let callback = pargs[pargs.length - 1];
             if (_.isFunction(callback)) {
                 callback();
             }
@@ -70,42 +67,44 @@ var MeteorComponent = (function () {
             }
         }
         return hSubscribe;
-    };
-    MeteorComponent.prototype.call = function (name) {
-        var args = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            args[_i - 1] = arguments[_i];
-        }
-        var _a = this._prepArgs(args), pargs = _a.pargs, autoBind = _a.autoBind;
-        var meteorCall = function () {
-            Meteor.call.apply(Meteor, [name].concat(pargs));
+    }
+    /**
+     *  Method has the same notation as Meteor.subscribe:
+     *    subscribe(name, [args1, args2], [callbacks], [autoBind])
+     *  except the last autoBind param (see autorun above).
+     *  @param {String} name - Name of the publication in the Meteor server
+     *  @param {any} args - Parameters that will be forwarded to the method.
+     *  @param {Boolean} autoBind - autoBind Determine whether Angular 2 zone will run
+     *   after the func call to initiate change detection.
+     */
+    call(name, ...args) {
+        let { pargs, autoBind } = this._prepArgs(args);
+        let meteorCall = () => {
+            Meteor.call(name, ...pargs);
         };
-        var zone = autoBind ? this._ngZone : utils_1.gZone;
+        let zone = autoBind ? this._ngZone : utils_1.gZone;
         return zone.run(meteorCall);
-    };
-    MeteorComponent.prototype.ngOnDestroy = function () {
-        for (var _i = 0, _a = this._hAutoruns; _i < _a.length; _i++) {
-            var hAutorun = _a[_i];
+    }
+    ngOnDestroy() {
+        for (let hAutorun of this._hAutoruns) {
             hAutorun.stop();
         }
-        for (var _b = 0, _c = this._hSubscribes; _b < _c.length; _b++) {
-            var hSubscribe = _c[_b];
+        for (let hSubscribe of this._hSubscribes) {
             hSubscribe.stop();
         }
         this._hAutoruns = null;
         this._hSubscribes = null;
-    };
-    MeteorComponent.prototype._prepArgs = function (args) {
-        var lastParam = args[args.length - 1];
-        var penultParam = args[args.length - 2];
-        var autoBind = true;
+    }
+    _prepArgs(args) {
+        let lastParam = args[args.length - 1];
+        let penultParam = args[args.length - 2];
+        let autoBind = true;
         if (_.isBoolean(lastParam) &&
             utils_1.isMeteorCallbacks(penultParam)) {
             args.pop();
             autoBind = lastParam !== false;
         }
         return { pargs: args, autoBind: autoBind };
-    };
-    return MeteorComponent;
-}());
+    }
+}
 exports.MeteorComponent = MeteorComponent;
