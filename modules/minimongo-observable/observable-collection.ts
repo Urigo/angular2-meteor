@@ -25,6 +25,12 @@ export module MongoObservable {
     transform ? : Function;
   }
 
+  /**
+   * A class represents a MongoDB collection in the client side, wrapped with RxJS
+   * Observables, so you can use it with your Angular 2 easier.
+   * The wrapper has the same API as Mongo.Collection, only the "find" method returns
+   * an ObservableCursor instead of regular Mongo.Cursor.
+   */
   export class Collection<T> {
     private _collection: Mongo.Collection<T>;
 
@@ -121,6 +127,24 @@ export module MongoObservable {
       return obs;
     }
 
+    /**
+     *  Method has the same notation as Mongo.Collection.find, only returns Observable.
+     *
+     *  @param {Mongo.Selector|Mongo.ObjectID|string} selector - A query describing the documents to find
+     *  @param {Object} options - Query options, such as sort, limit, etc.
+     *  @returns {ObservableCursor<T>} - RxJS Observable wrapped with Meteor features.
+     *  @example <caption>Using Angular2 Component</caption>
+     *  const MyCollection = MongoObservable.Collection("myCollection");
+     *
+     *  class MyComponent  {
+     *     private myData: ObservableCursor<any>;
+     *
+     *     constructor() {
+     *        this.myData = MyCollection.find({}, {limit: 10});
+     *     }
+     *  }
+     * @see {@link https://docs.meteor.com/api/collections.html#Mongo-Collection-find|Mongo.Collection on Meteor documentation}
+     */
     find(selector?: Selector | ObjectID | string, options?: {
       sort?: SortSpecifier;
       skip?: number;
