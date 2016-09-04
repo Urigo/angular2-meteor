@@ -16,11 +16,11 @@ export class ObservableCursor<T> extends Observable<T[]> {
   private _observers: Subscriber<T[]>[] = [];
 
   /**
-   *  Static method which creates an ObservableCursor<T> from Mongo.Cursor<T>.
+   *  Static method which creates an ObservableCursor from Mongo.Cursor.
    *  Use this to create an ObservableCursor object from an existing Mongo.Cursor.
    *  Prefer to create an Cursors from the ObservableCollection instance instead.
    *
-   *  @param {Mongo.Cursor<T>} cursor - The Mongo.Cursor<T> to wrap.
+   *  @param {Mongo.Cursor<T>} cursor - The Mongo.Cursor to wrap.
    *  @returns {ObservableCursor<T>} Wrapped Cursor.
    */
   static create<T>(cursor: Mongo.Cursor<T>): ObservableCursor<T> {
@@ -30,7 +30,7 @@ export class ObservableCursor<T> extends Observable<T[]> {
   /**
    * @constructor
    * @extends Observable
-   * @param {Mongo.Cursor<T>} cursor - The Mongo.Cursor<T> to wrap.
+   * @param {Mongo.Cursor<T>} cursor - The Mongo.Cursor to wrap.
    */
   constructor(cursor: Mongo.Cursor<T>) {
     super((observer: Subscriber<T[]>) => {
