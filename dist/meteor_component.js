@@ -36,7 +36,8 @@ class MeteorComponent {
      *    }
      * }
      *
-     * @see {@link https://docs.meteor.com/api/tracker.html#tracker_computation|Tracker.Computation}
+     * @see {@link https://docs.meteor.com/api/tracker.html#tracker_computation|Tracker.Computation in Meteor documentation}
+     * @see {@link https://docs.meteor.com/api/tracker.html#Tracker-autorun|autorun in Meteor documentation}
      */
     autorun(func, autoBind = true) {
         let autorunCall = () => {
@@ -56,10 +57,19 @@ class MeteorComponent {
      *  except the last autoBind param (see autorun above).
      *  @param {String} name - Name of the publication in the Meteor server
      *  @param {any} args - Parameters that will be forwarded to the publication.
-     *  @param {Boolean} autoBind - autoBind Determine whether Angular 2 zone will run
+     *  @param {Boolean} autoBind - Determine whether Angular 2 zone will run
      *   after the func call to initiate change detection.
      *  @returns {Meteor.SubscriptionHandle} - The handle of the subscription created by Meteor.
-     *  @see {@link http://docs.meteor.com/api/pubsub.html|Meteor.SubscriptionHandle}
+     *  @example
+     *  class MyComponent extends MeteorComponent {
+     *     constructor() {
+     *       super();
+     *
+     *       this.subscribe("myData", 10);
+     *     }
+     *  }
+     *
+     *  @see {@link http://docs.meteor.com/api/pubsub.html|Publication/Subscription in Meteor documentation}
      */
     subscribe(name, ...args) {
         let { pargs, autoBind } = this._prepArgs(args);
@@ -86,13 +96,24 @@ class MeteorComponent {
         return hSubscribe;
     }
     /**
-     *  Method has the same notation as Meteor.subscribe:
-     *    subscribe(name, [args1, args2], [callbacks], [autoBind])
+     *  Method has the same notation as Meteor.call:
+     *    call(name, [args1, args2], [callbacks], [autoBind])
      *  except the last autoBind param (see autorun above).
      *  @param {String} name - Name of the publication in the Meteor server
      *  @param {any} args - Parameters that will be forwarded to the method.
      *  @param {Boolean} autoBind - autoBind Determine whether Angular 2 zone will run
      *   after the func call to initiate change detection.
+     *  @example
+     *  class MyComponent extends MeteorComponent {
+     *     constructor() {
+     *       super();
+     *
+     *       this.call("serverMethod", (err, result) => {
+     *          // Handle response...
+     *       });
+     *     }
+     *  }
+     *
      *  @return {void}
      */
     call(name, ...args) {
