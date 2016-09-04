@@ -45,8 +45,8 @@ export declare module MongoObservable {
          *  Method has the same notation as Mongo.Collection.find, only returns Observable.
          *
          *  @param {Mongo.Selector|Mongo.ObjectID|string} selector - A query describing the documents to find
-         *  @param {Object} options - Query options, such as sort, limit, etc.
-         *  @returns {ObservableCursor<T>} - RxJS Observable wrapped with Meteor features.
+         *  @param {Collection~MongoQueryOptions} options - Query options, such as sort, limit, etc.
+         *  @returns {ObservableCursor<T>} RxJS Observable wrapped with Meteor features.
          *  @example <caption>Using Angular2 Component</caption>
          *  const MyCollection = MongoObservable.Collection("myCollection");
          *
@@ -57,7 +57,8 @@ export declare module MongoObservable {
          *        this.myData = MyCollection.find({}, {limit: 10});
          *     }
          *  }
-         * @see {@link https://docs.meteor.com/api/collections.html#Mongo-Collection-find|Mongo.Collection on Meteor documentation}
+         *
+         * @see {@link https://docs.meteor.com/api/collections.html#Mongo-Collection-find|find on Meteor documentation}
          */
         find(selector?: Selector | ObjectID | string, options?: {
             sort?: SortSpecifier;
@@ -67,6 +68,15 @@ export declare module MongoObservable {
             reactive?: boolean;
             transform?: Function;
         }): ObservableCursor<T>;
+        /**
+         *  Finds the first document that matches the selector, as ordered by sort and skip options.
+         *
+         *  @param {Mongo.Selector|Mongo.ObjectID|string} selector - A query describing the documents to find
+         *  @param {Collection~MongoQueryOptions} options - Query options, such as sort, limit, etc.
+         *  @returns {any} The first object, or `undefined` in case of non-existing object.
+         *
+         * @see {@link https://docs.meteor.com/api/collections.html#Mongo-Collection-findOne|findOne on Meteor documentation}
+         */
         findOne(selector?: Selector | ObjectID | string, options?: {
             sort?: SortSpecifier;
             skip?: number;

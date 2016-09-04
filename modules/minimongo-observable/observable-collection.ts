@@ -131,8 +131,8 @@ export module MongoObservable {
      *  Method has the same notation as Mongo.Collection.find, only returns Observable.
      *
      *  @param {Mongo.Selector|Mongo.ObjectID|string} selector - A query describing the documents to find
-     *  @param {Object} options - Query options, such as sort, limit, etc.
-     *  @returns {ObservableCursor<T>} - RxJS Observable wrapped with Meteor features.
+     *  @param {Collection~MongoQueryOptions} options - Query options, such as sort, limit, etc.
+     *  @returns {ObservableCursor<T>} RxJS Observable wrapped with Meteor features.
      *  @example <caption>Using Angular2 Component</caption>
      *  const MyCollection = MongoObservable.Collection("myCollection");
      *
@@ -143,7 +143,8 @@ export module MongoObservable {
      *        this.myData = MyCollection.find({}, {limit: 10});
      *     }
      *  }
-     * @see {@link https://docs.meteor.com/api/collections.html#Mongo-Collection-find|Mongo.Collection on Meteor documentation}
+     *
+     * @see {@link https://docs.meteor.com/api/collections.html#Mongo-Collection-find|find on Meteor documentation}
      */
     find(selector?: Selector | ObjectID | string, options?: {
       sort?: SortSpecifier;
@@ -157,6 +158,15 @@ export module MongoObservable {
       return ObservableCursor.create<T>(cursor);
     }
 
+    /**
+     *  Finds the first document that matches the selector, as ordered by sort and skip options.
+     *
+     *  @param {Mongo.Selector|Mongo.ObjectID|string} selector - A query describing the documents to find
+     *  @param {Collection~MongoQueryOptions} options - Query options, such as sort, limit, etc.
+     *  @returns {any} The first object, or `undefined` in case of non-existing object.
+     *
+     * @see {@link https://docs.meteor.com/api/collections.html#Mongo-Collection-findOne|findOne on Meteor documentation}
+     */
     findOne(selector?: Selector | ObjectID | string, options?: {
       sort?: SortSpecifier;
       skip?: number;
@@ -180,3 +190,13 @@ export module MongoObservable {
     }
   }
 }
+
+/**
+ * An options object for MongoDB queries.
+ * @typedef {Object} Collection~MongoQueryOptions
+ * @property {Object} sort - Sort order (default: natural order)
+ * @property {Number} skip - Number of results to skip at the beginning
+ * @property {Object} fields - Dictionary of fields to return or exclude.
+ * @property {Boolean} reactive - (Client only) Default true; pass false to disable reactivity
+ * @property {Function} transform - Overrides transform on the Collection for this cursor. Pass null to disable transformation.
+ */
