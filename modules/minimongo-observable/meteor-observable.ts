@@ -29,7 +29,7 @@ export class MeteorObservable {
    *  @param {any} args - Parameters that will be forwarded to the method.
    *   after the func call to initiate change detection.
    *  @returns {Observable<T>} - RxJS Observable, which completes when the server return a response.
-   *  @example <caption>Example using Angular2 Component/caption>
+   *  @example <caption>Example using Angular2 Component</caption>
    *  class MyComponent  {
    *     constructor() {
    *
@@ -73,7 +73,7 @@ export class MeteorObservable {
    *  @param {any} args - Parameters that will be forwarded to the publication.
    *   after the func call to initiate change detection.
    *  @returns {Observable} - RxJS Observable, which completes when the subscription is ready.
-   *  @example <caption>Example using Angular2 service/caption>
+   *  @example <caption>Example using Angular2 service</caption>
    *  class MyService {
    *     private meteorSubscription: Observable<any>;
    *
@@ -92,7 +92,7 @@ export class MeteorObservable {
    *     }
    *  }
    *
-   *  @example <caption>Example using Angular2 Component/caption>
+   *  @example <caption>Example using Angular2 Component</caption>
    *  class MyComponent implements OnInit, OnDestory {
    *     private meteorSubscription: Observable<any>;
    *
